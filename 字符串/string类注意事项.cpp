@@ -1,0 +1,1 @@
+string.size()返回的是unsigned int ，加减的时候如果有负数会出问题
