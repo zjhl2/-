@@ -1,0 +1,1 @@
+__builtin_popcount(i) 计算二进制里有几个1
