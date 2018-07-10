@@ -1,1 +1,2 @@
-__builtin_popcount(i) 计算二进制里有几个1
+__builtin_popcount(x) 计算二进制里有几个1
+__builtin_ffs(x) 计算最后一个1在第几位     x=4时返回3

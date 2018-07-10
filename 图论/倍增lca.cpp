@@ -14,9 +14,11 @@ int lca(int x,int y)
 	return fa[x][0];
 }
 
-
+void prelca()
+{
 	for (int j=1;j<=20;j++)
 		for (int i=1;i<=n;i++) fa[i][j]=fa[fa[i][j-1]][j-1];
+}
 
 int go(int x,int step)
 {
