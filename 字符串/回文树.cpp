@@ -6,7 +6,7 @@ struct Palindromic_Tree {
     int cnt[MAXN] ;//cnt[i]表示节点i表示的本质不同的串的个数（建树时求出的不是完全的，最后count()函数跑一遍以后才是正确的）
     int num[MAXN] ;//num[i]表示以节点i表示的最长回文串的最右端点为回文串结尾的回文串个数
     int len[MAXN] ;//len[i]表示节点i表示的回文串的长度
-    int s[MAXN] ;//存放添加的字符
+    int S[MAXN] ;//存放添加的字符
     int last ;//指向上一个字符所在的节点，方便下一次add
     int n ;//字符数组指针
     int p ;//节点指针
@@ -25,18 +25,18 @@ struct Palindromic_Tree {
         newnode ( -1 ) ;
         last = 0 ;
         n = 0 ;
-        s[n] = -1 ;//开头放一个字符集中没有的字符，减少特判
+        S[n] = -1 ;//开头放一个字符集中没有的字符，减少特判
         fail[0] = 1 ;
     }
 
     int get_fail ( int x ) {//和KMP一样，失配后找一个尽量最长的
-        while ( s[n - len[x] - 1] != s[n] ) x = fail[x] ;
+        while ( S[n - len[x] - 1] != S[n] ) x = fail[x] ;
         return x ;
     }
 
     void add ( int c ) {
         c -= 'a' ;
-        s[++ n] = c ;
+        S[++ n] = c ;
         int cur = get_fail ( last ) ;//通过上一个回文串找这个回文串的匹配位置
         if ( !nxt[cur][c] ) {//如果这个回文串没有出现过，说明出现了一个新的本质不同的回文串
             int now = newnode ( len[cur] + 2 ) ;//新建节点
