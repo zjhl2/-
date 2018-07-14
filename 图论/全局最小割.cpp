@@ -4,6 +4,10 @@
 1. 算法在做"最大生成树"时更新的不是普通意义上的最大边, 而是与之相连的边的权值和, 当所有边都是单位权值时就是累计度.
 2. "最后进入A的两点记为s和t", 网上对s有两种解释, 一是在t之前一个加进去的点, 二是t的前趋节点, 也就是最后选择的那条边的另一端. 正解是第一种!
 */
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+using namespace std;
 const int MAXN = 501 , MAXM = 100001 ;
 #define typec long long
 const typec inf = 1000000000000000LL , maxw = 1000000000000LL ;
