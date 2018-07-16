@@ -1,25 +1,27 @@
-bool find(int u)
-{
+const int N=505;
+vector<int>link[N];
+bool vis[N];
+int g[N];
+int n; 
+void init(){
+    for (int i=1;i<=n;i++) link[i].clear();
+}
+bool find(int u){
     for (int v:link[u])
-        if (!vis[v])
-        {
+        if (!vis[v]){
             vis[v]=1;
-            if (!g[v]||find(g[v]))
-            {
+            if (!g[v]||find(g[v])){
                 g[v]=u;
-                b[u]=v;
                 return 1;
             }
         }
     return 0;
 }
-int HA()
-{
+int HA(){
     int all=0;
-    memset(g,-1,sizeof(g));
-    for (int i=1;i<=n;i++)
-    {
-        memset(vis,0,sizeof(vis));
+    for (int i=1;i<=n;i++) g[i]=0;
+    for (int i=1;i<=n;i++){
+        for (int j=1;j<=n;j++) vis[j]=0;
         if (find(i)) all++;
     }
     return all;

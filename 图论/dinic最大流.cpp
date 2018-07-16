@@ -1,6 +1,6 @@
 
-const int mxN=100005,mxM=100005,INF=0x3f3f3f3f;
 struct graph{
+const static int mxN=100005,mxM=100005,INF=0x3f3f3f3f;
     int S,T;
     int base[mxN],vec[mxM],pre[mxM],tot;
     int c[mxM];
