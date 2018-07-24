@@ -97,3 +97,17 @@ int main(){
     }
     printf("%d\n",f[m]);
 }
+
+        init();
+        int n=strlen(s+1);
+        for (int i=1;i<=n;i++){
+            add(s[i]);
+            l[i]=0;
+            for (int v=last;len[v]>0;v=slink[v]){
+                int pos=i-(len[slink[v]]+diff[v]);
+                sans[v]=pos+1;
+                if (diff[v]==diff[fail[v]])
+                    sans[v]=(sans[v]+sans[fail[v]])%mo;
+                l[i]=(l[i]+sans[v])%mo;
+            }
+        }
