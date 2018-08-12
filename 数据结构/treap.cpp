@@ -29,13 +29,12 @@ int merge(int a,int b){
 }
 
 void split(int u,int k,int &x,int &y){
-    assert(k>=0&&k<=T[u].sz);
     if (!u) x=0,y=0;
     else{
         push(u);
         int lsz=T[T[u].ls].sz;
-        if (lsz>=k) y=u,split(T[u].ls,k,x,T[u].ls);
-        else x=u,split(T[u].rs,k-lsz-1,T[u].rs,y);
+        if (lsz>=k) y=u,split(T[u].ls,k,x,T[u].ls),up(y);
+        else x=u,split(T[u].rs,k-lsz-1,T[u].rs,y),up(x);
     }
 }
 
