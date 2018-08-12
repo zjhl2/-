@@ -1,16 +1,13 @@
-void build() {
+int build(int n) {
 	int top=0;
-	rep(i,1,n+1) l[i]=0,r[i]=0,vis[i]=0;
-	rep(i,1,n+1) {
+	for (int i=1;i<=n;i++) l[i]=0,r[i]=0;
+	for (int i=1;i<=n;i++) {
 		int k=top;
-		while (k>0&&a[stk[k-1]]>a[i]) --k;
+		while (k>0&&a[stk[k-1]]<a[i]) --k;
 		if (k) r[stk[k-1]]=i;
 		if (k<top) l[i]=stk[k];
 		stk[k++]=i;
 		top=k;
 	}
-	rep(i,1,n+1) vis[l[i]]=vis[r[i]]=1;
-	int rt=0;
-	rep(i,1,n+1) if (vis[i]==0) rt=i;
-	dfs(rt);
+    return stk[0];
 }

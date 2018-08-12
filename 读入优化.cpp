@@ -21,3 +21,5 @@ void print(int x){
     if(x>9) print(x/10);
     putchar(x%10+'0');
 }
+// 读入100w个int scanf需要0.5s， 优化后需要0.1s
+// 输出100w个int printf需要1.8s, 优化后需要0.1s
