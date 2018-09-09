@@ -1,72 +1,91 @@
-#include<bits/stdc++.h>
-#define N 300005
-using namespace std;
-int n,m,val[N];
 struct Link_Cut_Tree{
-    int top,c[N][2],fa[N],xr[N],q[N],rev[N];
-    inline void pushup(int x){xr[x]=xr[c[x][0]]^xr[c[x][1]]^val[x];}
-    inline void pushdown(int x){
-        int l=c[x][0],r=c[x][1];
-        if(rev[x]){
-            rev[l]^=1;rev[r]^=1;rev[x]^=1;
-            swap(c[x][0],c[x][1]);
+    const static int N=100005;
+    int top,ch[N][2],fa[N],sz[N],q[N],rev[N];
+    int _sz[N]; //虚边sz和
+    void init(int n){
+        for (int i=1;i<=n;i++){
+            ch[i][0]=ch[i][1]=0;
+            fa[i]=0; sz[i]=1; 
+            _sz[i]=0; //
+            rev[i]=0;
         }
     }
-    inline bool isroot(int x){return c[fa[x]][0]!=x&&c[fa[x]][1]!=x;}
+    inline void pushup(int x){
+        sz[x]=sz[ch[x][0]]+sz[ch[x][1]]+1;
+        sz[x]+=_sz[x]; //
+    }
+    inline void pushdown(int x){
+        int l=ch[x][0],r=ch[x][1];
+        if(rev[x]){
+            rev[l]^=1; rev[r]^=1; rev[x]^=1;
+            swap(ch[x][0],ch[x][1]);
+        }
+    }
+    inline bool isroot(int x){
+        return ch[fa[x]][0]!=x&&ch[fa[x]][1]!=x;
+    }
     void rotate(int x){
         int y=fa[x],z=fa[y],l,r;
-        if(c[y][0]==x)l=0;else l=1;r=l^1;
-        if(!isroot(y)){if(c[z][0]==y)c[z][0]=x;else c[z][1]=x;}
-        fa[x]=z;fa[y]=x;fa[c[x][r]]=y;
-        c[y][l]=c[x][r];c[x][r]=y;
-        pushup(y);pushup(x);
+        if (ch[y][0]==x) l=0; 
+        else l=1; 
+        r=l^1;
+        if (!isroot(y)){
+            if(ch[z][0]==y) ch[z][0]=x;
+            else ch[z][1]=x;
+        }
+        fa[x]=z; fa[y]=x; fa[ch[x][r]]=y;
+        ch[y][l]=ch[x][r]; ch[x][r]=y;
+        pushup(y); pushup(x);
     }
     void splay(int x){
-        top=1;q[top]=x;
-        for(int i=x;!isroot(i);i=fa[i])q[++top]=fa[i];
-        for(int i=top;i;i--)pushdown(q[i]);
+        top=1; q[top]=x;
+        for(int i=x;!isroot(i);i=fa[i]) q[++top]=fa[i];
+        for(int i=top;i;i--) pushdown(q[i]);
         while(!isroot(x)){
             int y=fa[x],z=fa[y];
             if(!isroot(y)){
-                if((c[y][0]==x)^(c[z][0]==y))rotate(x);
+                if((ch[y][0]==x)^(ch[z][0]==y)) rotate(x);
                 else rotate(y);
-            }rotate(x);
+            }
+            rotate(x);
         }
     }
-    void access(int x){for(int t=0;x;t=x,x=fa[x])splay(x),c[x][1]=t,pushup(x);}
-    void makeroot(int x){access(x);splay(x);rev[x]^=1;}
-    int find(int x){access(x);splay(x);while(c[x][0])x=c[x][0];return x;}
-    void split(int x,int y){makeroot(x);access(y);splay(y);}
-    void cut(int x,int y){split(x,y);if(c[y][0]==x)c[y][0]=0,fa[x]=0;}
-    void link(int x,int y){makeroot(x);fa[x]=y;}
+    void access(int x){
+        for(int t=0;x;t=x,x=fa[x]){
+            splay(x);
+            _sz[x]+=sz[ch[x][1]]; //
+            ch[x][1]=t;
+            _sz[x]-=sz[ch[x][1]]; //
+            pushup(x);
+        }
+    }
+    void makeroot(int x){
+        access(x); splay(x); rev[x]^=1;
+    }
+    int find(int x){
+        access(x); splay(x); 
+        while(ch[x][0]) x=ch[x][0];
+        return x;
+    }
+    void split(int x,int y){
+        makeroot(x); access(y); splay(y);
+    }
+    void cut(int x,int y){
+        split(x,y);
+        assert(ch[y][0]==x);
+        ch[y][0]=0,fa[x]=0;
+        pushup(y);
+    }
+    void link(int x,int y){
+        split(x,y); fa[x]=y; 
+        _sz[y]+=sz[x]; //
+        pushup(y);
+    }
+    int get_fa(int x,int y){
+        split(x,y);
+        pushdown(y);
+        x=ch[y][0];
+        while(pushdown(x),ch[x][1]) x=ch[x][1];
+        return x;
+    }
 }T;
-inline int read(){
-    int f=1,x=0;char ch;
-    do{ch=getchar();if(ch=='-')f=-1;}while(ch<'0'||ch>'9');
-    do{x=x*10+ch-'0';ch=getchar();}while(ch>='0'&&ch<='9');
-    return f*x;
-}
-int main(){
-    n=read();m=read();
-    for(int i=1;i<=n;i++)val[i]=read(),T.xr[i]=val[i];
-    while(m--){
-        int opt=read();
-        if(opt==0){
-            int x=read(),y=read();T.split(x,y);
-            printf("%d\n",T.xr[y]);
-        }
-        if(opt==1){
-            int x=read(),y=read(),xx=T.find(x),yy=T.find(y);
-            if(xx!=yy)T.link(x,y);
-        }
-        if(opt==2){
-            int x=read(),y=read(),xx=T.find(x),yy=T.find(y);
-            if(xx==yy)T.cut(x,y);
-        }
-        if(opt==3){
-            int x=read(),y=read();
-            T.access(x);T.splay(x);val[x]=y;T.pushup(x);
-        }
-    }
-    return 0;
-}

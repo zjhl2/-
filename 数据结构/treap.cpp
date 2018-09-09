@@ -1,11 +1,17 @@
-const int mxN=1000005;
+const int mxN=100005;
 int root;
 int tot;
 struct node {
-    int val,pri,sz,ls,rs;
+    int val,pri,sz,ls,rs,rev;
 }T[mxN];
 
 void push(int u){
+    if (T[u].rev){
+        T[u].rev=0;
+        swap(T[u].ls,T[u].rs);
+        T[T[u].ls].rev^=1;
+        T[T[u].rs].rev^=1;
+    }
 }
 
 void up(int u){
@@ -40,6 +46,7 @@ void split(int u,int k,int &x,int &y){
 
 int find(int u,int k){
     assert(k>=1&&k<=T[u].sz);
+    push(u);
     int lsz=T[T[u].ls].sz;
     if (lsz+1==k) return u;
     if (lsz>=k) return find(T[u].ls,k);
