@@ -1,183 +1,141 @@
-#include<cstdio>
-#include<algorithm>
+#include<bits/stdc++.h>
 using namespace std;
-const int N=50005;
-int a[N];
-int base[N],vec[2*N],pre[2*N],tot;
-int id[N],rd[N],son[N],deep[N],size[N],fa[N],top[N];
-int T;
-int n;
-void link(int x,int y)
-{
-    vec[++tot]=y; pre[tot]=base[x]; base[x]=tot;
-}
+typedef unsigned long long ll;
+const int N=100005;
 
-struct seg
-{
-    int ma,mi,fl,fr;
-    seg operator+(const seg &t)const
-    {
-        if (ma==-1) return t;
-        if (t.ma==-1) return *this;
-        int maa=max(ma,t.ma);
-        int mii=min(mi,t.mi);
-        int ffl=max(fl,t.fl);
-        ffl=max(ffl,ma-t.mi);
-        int ffr=max(fr,t.fr);
-        ffr=max(ffr,t.ma-mi);
-        return {maa,mii,ffl,ffr};
-    }
-    void operator+=(const int t)
-    {
-        ma+=t; mi+=t;
-    }
-}s[4*N];
-int lazy[4*N];
-void build(int i,int l,int r)
-{
-    lazy[i]=0;
-    if (l==r)
-    {
-        s[i]={a[rd[l]],a[rd[l]],0};
-        return;
-    }
-    int mid=(l+r)/2;
-    build(i*2,l,mid);
-    build(i*2+1,mid+1,r);
-    s[i]=s[i*2]+s[i*2+1];
-}
-void pd(int i)
-{
-    if (lazy[i])
-    {
-        lazy[i*2]+=lazy[i];
-        lazy[i*2+1]+=lazy[i];
-        s[i*2]+=lazy[i];
-        s[i*2+1]+=lazy[i];
-        lazy[i]=0;
-    }
-}
-void add(int i,int l,int r,int x,int y,int z)
-{
-    if (x<=l&&r<=y)
-    {
-        s[i]+=z;
-        lazy[i]+=z;
-        return;
-    }
-    pd(i);
-    int mid=(l+r)/2;
-    if (x<=mid) add(i*2,l,mid,x,y,z);
-    if (y>mid) add(i*2+1,mid+1,r,x,y,z);
-    s[i]=s[i*2]+s[i*2+1];
-}
-seg get(int i,int l,int r,int x,int y)
-{
-    if (x<=l&&r<=y) return s[i];
-    pd(i);
-    int mid=(l+r)/2;
-    seg tmp={-1,-1,-1,-1};
-    if (x<=mid) tmp=tmp+get(i*2,l,mid,x,y);
-    if (y>mid) tmp=tmp+get(i*2+1,mid+1,r,x,y);
-    return tmp;
-}
-
-
-void dfs1(int u,int d,int p)
-{
-    fa[u]=p;
+int n; 
+int fa[N];
+vector<int>link[N];
+int deep[N],son[N],sz[N];
+void dfs1(int u,int d){
     deep[u]=d;
     son[u]=-1;
-    size[u]=1;
-    for (int now=base[u];now;now=pre[now])
-    {
-        int v=vec[now];
-        if (v==p) continue;
-        dfs1(v,d+1,u);
-        size[u]+=size[v];
-        if (son[u]==-1||size[v]>size[son[u]]) son[u]=v;
+    sz[u]=1;
+    for (int v:link[u]){
+        dfs1(v,d+1);
+        sz[u]+=sz[v];
+        if (son[u]==-1||sz[v]>sz[son[u]]) son[u]=v;
     }
 }
-void dfs2(int u,int p)
-{
+int top[N],id[N],rd[N];
+int T;
+void dfs2(int u,int p){
     top[u]=p;
     id[u]=++T;
     rd[T]=u;
     if (son[u]!=-1) dfs2(son[u],p);
-    for (int now=base[u];now;now=pre[now])
-    {
-        int v=vec[now];
-        if (v==fa[u]||v==son[u]) continue;
+    for (int v:link[u]){
+        if (v==son[u]) continue;
         dfs2(v,v);
     }
 }
 
-int lca(int x,int y)
-{
+ll sum[4*N],lazya[4*N],lazym[4*N];
+void build(int i,int l,int r){
+    sum[i]=lazya[i]=0;
+    lazym[i]=1;
+    if (l==r) return;
+    int mid=(l+r)/2;
+    build(i*2,l,mid);
+    build(i*2+1,mid+1,r);
+}
+void push(int i,int l,int r){
+    if (lazym[i]!=1){
+        sum[2*i]*=lazym[i];
+        sum[2*i+1]*=lazym[i];
+        lazym[2*i]*=lazym[i];
+        lazym[2*i+1]*=lazym[i];
+        lazya[2*i]*=lazym[i];
+        lazya[2*i+1]*=lazym[i];
+        lazym[i]=1;
+    }
+    if (lazya[i]){
+        int mid=(l+r)/2;
+        sum[2*i]+=lazya[i]*(mid-l+1);
+        sum[2*i+1]+=lazya[i]*(r-mid);
+        lazya[2*i]+=lazya[i];
+        lazya[2*i+1]+=lazya[i];
+        lazya[i]=0;
+    }
+}
+void up(int i){
+    sum[i]=sum[i*2]+sum[i*2+1];
+}
+void modi(int i,int l,int r,int x,int y,int tp,ll val){
+    if (x<=l&&r<=y){
+        if (tp==1) sum[i]*=val,lazym[i]*=val,lazya[i]*=val;
+        if (tp==2) sum[i]+=val*(r-l+1),lazya[i]+=val;
+        if (tp==3) sum[i]=-sum[i]-(r-l+1),lazym[i]*=-1,lazya[i]*=-1,lazya[i]--;
+        return;
+    }
+    push(i,l,r);
+    int mid=(l+r)/2;
+    if (x<=mid) modi(i*2,l,mid,x,y,tp,val);
+    if (y>mid) modi(i*2+1,mid+1,r,x,y,tp,val);
+    up(i);
+}
+ll get(int i,int l,int r,int x,int y){
+    if (x<=l&&r<=y) return sum[i];
+    push(i,l,r);
+    int mid=(l+r)/2;
+    ll ret=0;
+    if (x<=mid) ret+=get(i*2,l,mid,x,y);
+    if (y>mid) ret+=get(i*2+1,mid+1,r,x,y);
+    ll tmp=sum[i];
+    up(i);
+    assert(tmp==sum[i]);
+    return ret;
+}
+int getlca(int x,int y){
     int f1=top[x],f2=top[y];
-    while(f1!=f2)
-    {
+    while(f1!=f2){
         if (deep[f1]<deep[f2]) swap(f1,f2),swap(x,y);
         x=fa[f1],f1=top[x];
     }
     if (deep[x]<deep[y]) swap(x,y);
     return y;
 }
-
-seg getseg(int x,int LCA,int v)
-{
-    seg tmp={-1,-1,-1,-1};
-    while(x!=LCA&&deep[top[x]]>deep[LCA])
-    {
-        tmp=get(1,1,n,id[top[x]],id[x])+tmp;
-        add(1,1,n,id[top[x]],id[x],v);
+ll cg(int l,int r,int tp,ll val){
+    if (tp==4)
+        return get(1,1,n,l,r);
+    modi(1,1,n,l,r,tp,val);
+    return 0;
+}
+ll line(int tp,int x,int lca,ll val){
+    ll ret=0;
+    while(x!=lca&&deep[top[x]]>deep[lca]){
+        ret+=cg(id[top[x]],id[x],tp,val);
         x=fa[top[x]];
     }
-    tmp=get(1,1,n,id[LCA],id[x])+tmp;
-    add(1,1,n,id[LCA],id[x],v);
-    return tmp;
+    if (x!=lca) ret+=cg(id[lca]+1,id[x],tp,val);
+    return ret;
 }
-int solve(int x,int y,int v)
-{
-    int LCA=lca(x,y);
-
-    seg tmp1=getseg(x,LCA,v);
-    add(1,1,n,id[LCA],id[LCA],-v);
-    seg tmp2=getseg(y,LCA,v);
-
-    int ans=max(tmp1.fl,tmp2.fr);
-    ans=max(ans,tmp2.ma-tmp1.mi);
-    return ans;
+ll route(int tp,int x,int y,ll val){
+    int lca=getlca(x,y);
+    ll ret1=line(tp,x,lca,val);
+    ll ret2=line(tp,y,lca,val);
+    ll ret3=cg(id[lca],id[lca],tp,val);
+    return ret1+ret2+ret3;
 }
-
-int main()
-{
-    int t; scanf("%d",&t);
-    while(t--)
-    {
-        scanf("%d",&n);
-        for (int i=1;i<=n;i++) scanf("%d",&a[i]);
-        for (int i=1;i<n;i++)
-        {
-            int x,y;
-            scanf("%d%d",&x,&y);
-            link(x,y);
-            link(y,x);
+int main(){
+    while(~scanf("%d",&n)){
+        for (int i=2;i<=n;i++){
+            int x; scanf("%d",&x);
+            fa[i]=x;
+            link[x].emplace_back(i);
         }
-
-        dfs1(1,1,-1);
-        dfs2(1,-1);
+        dfs1(1,1);
+        dfs2(1,1);
         build(1,1,n);
-
-        int q;
-        scanf("%d",&q);
-        while(q--)
-        {
-            int x,y,v;
-            scanf("%d%d%d",&x,&y,&v);
-            printf("%d\n",solve(x,y,v));
+        int m; scanf("%d",&m);
+        while(m--){
+            int tp,x,y; ll val;
+            scanf("%d%d%d",&tp,&x,&y);
+            if (tp<=2) scanf("%llu",&val);
+            ll ret=route(tp,x,y,val);
+            if (tp==4) printf("%llu\n",ret);
         }
-        tot=T=0;
-        for (int i=1;i<=n;i++) base[i]=0;
+        for (int i=1;i<=n;i++) link[i].clear();
+        T=0;
     }
 }
