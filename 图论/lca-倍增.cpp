@@ -1,14 +1,13 @@
+#include<bits/stdc++.h>
+using namespace std;
 
 const int N=100005;
 const int step=18;
-
-int n; 
 int fa[N][step];
 int deep[N];
-int getlca(int x,int y) {
+int getlca(int x,int y){
 	if (deep[x]<deep[y]) swap(x,y);
-	if (deep[x]>deep[y])
-	{
+	if (deep[x]>deep[y]){
 		for (int j=step-1;j>=0;j--)
 			if (deep[fa[x][j]]>deep[y]) x=fa[x][j];
 		x=fa[x][0];
