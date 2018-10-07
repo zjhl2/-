@@ -1,5 +1,13 @@
-__builtin_popcount(x) 计算二进制里有几个1
-__builtin_ffs(x) 计算最后一个1在第几位     x=4时返回3
+__builtin_ffs(x)：返回x中最后一个为1的位是从后向前的第几位，如__builtin_ffs(0x789)=1, __builtin_ffs(0x78c)=3。于是，__builtin_ffs(x) - 1就是x中最后一个为1的位的位置。
+
+__builtin_popcount(x)：x中1的个数。
+
+__builtin_ctz(x)：x末尾0的个数。x=0时结果未定义。
+
+__builtin_clz(x)：x前导0的个数。x=0时结果未定义。
+上面的宏中x都是unsigned int型的，如果传入signed或者是char型，会被强制转换成unsigned int。
+
+__builtin_parity(x)：x中1的奇偶性。
 
 加栈
     int __size__ = 256 << 20; // 256MB
