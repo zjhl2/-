@@ -68,7 +68,7 @@ struct FFT{
         for (int i=0;i<lena+lenb-1;i++)
             c[i]=((ll)(h[i].x+0.5)+((ll)(hh[i].x+0.5)%mo<<15)+((ll)(h[i].y+0.5)%mo<<30))%mo;
     }
-    void mul(int *a,int *b,int *c,int lena,int lenb) {
+    void mul(int *a,int *b,int *c,int lena,int lenb){
         int n=getlen(lena,lenb);
         for (int i=0;i<n;i++){
             f[i]=i<lena?Cpx{double(a[i]),0}:Cpx{0,0};

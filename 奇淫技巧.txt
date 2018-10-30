@@ -14,3 +14,7 @@ __builtin_parity(x)£ºxÖÐ1µÄÆæÅ¼ÐÔ¡£
     char *__p__ = (char*)malloc(__size__) + __size__;
     __asm__("movl %0, %%esp\n" :: "r"(__p__));
 
+0xc0c0c0c0=-1061109568
+0x3f3f3f3f=1061109567 
+
+fmod(double x, double y)  x=x%y, if (x<0) x+=y
