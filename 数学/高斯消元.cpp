@@ -1,28 +1,3 @@
-//列主元法
-void gauss(int n)
-{
-    for (int i=0;i<=n;i++)
-    {
-		int k=i;
-		for (int j=i+1;j<=n;j++)
-			if (abs(a[j][i])>abs(a[k][i])) k=j;
-        if (k!=i)
-            for (int j=0;j<=n+1;j++) swap(a[i][j],a[k][j]);
-		for (k=i+1;k<=n;k++)
-		{
-			double l=a[k][i]/a[i][i];
-			for (int j=i;j<=n+1;j++) a[k][j]-=l*a[i][j];
-		}
-    }
-	x[n]=a[n][n+1]/a[n][n];
-	for (int i=n-1;i>=0;i--)
-	{
-		for (int j=i+1;j<=n;j++)
-			a[i][n+1]-=a[i][j]*x[j];
-		x[i]=a[i][n+1]/a[i][i];
-	}
-}
-
 //求行列式
 ll gauss(int n){
     ll ret=1;

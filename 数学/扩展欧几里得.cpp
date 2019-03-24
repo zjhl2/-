@@ -1,18 +1,10 @@
-int egcd(int a,int b,int &x,int &y)
-{
-	if (b==0){x=1; y=0; return a;}
+int egcd(int a,int b,int &x,int &y){
+	if (b==0){ x=1; y=0; return a;}
 	int tmp=egcd(b,a%b,y,x);
 	y-=a/b*x;
 	return tmp;
 }
-//ax+by=gcd(a,b)µÄ×îĞ¡½â
-//x+b/g*nÊÇÍ¨½â
+//ax+by=gcd(a,b)çš„æœ€å°è§£
+//x+b/g*næ˜¯é€šè§£
+//ax+by=d*gcd(a,b) æ±‚å‡ºxå,x=x*d%(b/g)
 
-int ny(int a,int mo)
-{
-	int x,y;
-	int gcd=egcd(a,mo,x,y);
-	return (x+mo)%mo;
-}
-Çó³öx¼ÓÄ£È¡Ä£¼´ÎªÄæÔª
-Âú×ãa*k¡Ô1 (mod p)µÄkÖµ¾ÍÊÇa¹ØÓÚpµÄ³Ë·¨ÄæÔª

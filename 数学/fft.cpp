@@ -79,4 +79,13 @@ struct FFT{
         fft(f,n,-1);
         for (int i=0;i<lena+lenb-1;i++) c[i]=int(f[i].x+0.5);
     }
-}FFT;
+}fft;
+const int N=200005;
+int x1[N],x2[N],x3[N*2];
+void mul(vector<int> &a,vector<int> &b,vector<int> &c){
+	for (int i=0;i<a.size();i++) x1[i]=a[i];
+	for (int i=0;i<b.size();i++) x2[i]=b[i];
+	fft.mul(x1,x2,x3,a.size(),b.size());
+	c.resize(a.size()+b.size()-1);
+	for (int i=0;i<a.size()+b.size()-1;i++) c[i]=bool(x3[i]);
+}

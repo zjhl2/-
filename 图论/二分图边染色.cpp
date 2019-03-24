@@ -6,10 +6,8 @@ const int N=1005;
 int clr[N][N];
 int ga[N][N],gb[N][N];
 int cnt;
-void dfs(int u,int p,int c1,int c2)
-{
-	if (u==0)
-	{
+void dfs(int u,int p,int c1,int c2){
+	if (u==0){
 		swap(gb[p][c1],gb[p][c2]);
 		return;
 	}
@@ -22,12 +20,10 @@ void dfs(int u,int p,int c1,int c2)
 }
 
 int mx[N*100],my[N*100];
-int main()
-{
+int main(){
 	int a,b,m; scanf("%d%d%d",&a,&b,&m);
 	int ans=0;
-	for (int i=1;i<=m;i++)
-	{
+	for (int i=1;i<=m;i++){
 		int x,y; scanf("%d%d",&x,&y);  mx[i]=x; my[i]=y;
 		int c1=1;
 		while(ga[x][c1]) c1++;

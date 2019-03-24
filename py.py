@@ -7,7 +7,10 @@ while (T > 0) :
     print int(n.sqrt()) & 1
 # 大数开根号
 	
-	
+import sys    
+for n in sys.stdin:
+    print int(n)
+#多组输入
 	
 import decimal
 T = int(raw_input())

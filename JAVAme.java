@@ -2,9 +2,46 @@ import java.lang.reflect.Array;
 import java.math.*;  
 import java.util.*;  
   
-  
+static class InputReader {
+    public BufferedReader reader;
+    public StringTokenizer tokenizer;
+
+    public InputReader(InputStream stream) {
+        reader = new BufferedReader(new InputStreamReader(stream), 32768);
+        tokenizer = null;
+    }
+ 
+    public String next() {
+        while (tokenizer == null || !tokenizer.hasMoreTokens()) {
+            try {
+                tokenizer = new StringTokenizer(reader.readLine());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return tokenizer.nextToken();
+    }
+ 
+    public int nextInt() {
+        return Integer.parseInt(next());
+    } 
+}
+
 public class Main {  
-    public static void main(String[] args) {  
+	static long a[][] = new long[105][105];
+	static long pow(long x,long y,long mo){
+		long ret=1;
+		while(y>0){
+			if (y%2==1) ret=ret*x%mo;
+			x=x*x%mo;
+			y/=2;
+		}
+		return ret;
+	}
+    public static void main(String[] args){  
+		boolean flag=false;
+
+		InputReader fcin=new InputReader(System.in);
         Scanner cin= new Scanner(System.in);  
         BigInteger Bx;
         Bx=BigInteger.valueOf(1);
@@ -42,109 +79,4 @@ public class Main {
         	System.out.print(a[i]+" ");
     }  
 }  
-
-
-
-
-import java.util.*;  
-import java.math.*;
-
-public class Main {
-	static long a[][] = new long[105][105];
-	static long c[][] = new long[105][105];			
-	static long[] p=new long[105];
-	static long[] r=new long[105];
-	static long x,y;
-	static long pow(long x,long y,long mo)
-	{
-		long ret=1;
-		while(y>0)
-		{
-			if (y%2==1) ret=ret*x%mo;
-			x=x*x%mo;
-			y/=2;
-		}
-		return ret;
-	}
-	static long egcd(long a,long b)
-	{
-		if (b==0){x=1; y=0; return a;}
-		long tmp=egcd(b,a%b);
-		long t=x; x=y; y=t;
-		y-=a/b*x;
-		return tmp;
-	}
-	static long CNA(int n)
-	{
-		long mo=p[1],re=r[1];
-		for (int i=2;i<=n;i++)
-		{
-			//x*mo+re=y*p[i]+r[i];
-			long gcd=egcd(mo,p[i]);
-			if ((r[i]-re)%gcd!=0) return -1;
-			x*=(r[i]-re)/gcd;
-			x=(x%(p[i]/gcd)+(p[i]/gcd))%(p[i]/gcd);  // 模后模
-			re=x*mo+re;
-			mo=mo/gcd*p[i];
-		}
-		return re;
-	}
-	static long gauss(int n,long mo)
-	{
-		for (int i=1;i<=n;i++)
-			for (int j=1;j<=n;j++) a[i][j]=c[i][j]%mo;
-		boolean flag=false;
-		for (int i=1;i<=n;i++)
-		{
-			int k=i;
-			while(k<=n&&a[k][i]==0) k++;
-			if (k>n) return 0;
-			if (k!=i) 
-			{
-				flag=!flag;
-				for (int j=1;j<=n;j++) 
-				{
-					long t=a[i][j];
-					a[i][j]=a[k][j];
-					a[k][j]=t;
-				}
-			}
-			for (k=i+1;k<=n;k++)
-			{
-				long l=a[k][i]*pow(a[i][i],mo-2,mo)%mo;
-				for (int j=i;j<=n;j++) a[k][j]=(a[k][j]-l*a[i][j])%mo;
-			}
-		}
-		long ans=1;
-		for (int i=1;i<=n;i++) ans=ans*a[i][i]%mo;
-		if (flag) ans=-ans;
-		return (ans%mo+mo)%mo;
-	}
-	public static void main(String[] args)
-	{
-		Scanner cin= new Scanner(System.in);  
-		while(cin.hasNext())
-		{
-			int n=cin.nextInt();
-			long m=cin.nextLong();
-			for (int i=1;i<=n;i++)
-				for (int j=1;j<=n;j++) c[i][j]=cin.nextLong();
-
-			int top=0;
-			for (long i=2;i*i<=m;i++)
-				if (m%i==0)
-				{
-					p[++top]=i;
-					while(m%i==0) m/=i;
-				}
-			if (m!=1) p[++top]=m;
-			//System.out.println(top);
-			for (int i=1;i<=top;i++) r[i]=gauss(n,p[i]);
-			//for (int i=1;i<=top;i++) System.out.println(p[i]+" "+r[i]);
-			System.out.println(CNA(top));
-		}
-
-	}
-
-}
 
